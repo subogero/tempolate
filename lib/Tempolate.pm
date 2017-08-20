@@ -11,13 +11,10 @@ my $opt = {};
 GetOptions($opt);
 my $verb = shift;
 
-print STDERR "Tempolate:: reading input\n";
 my $yaml;
 $yaml .= $_ while <>;
 my $data = Load $yaml;
-print STDERR Dump $data;
 
-print STDERR "Tempolate:: importing vars\n";
 if (ref $data eq 'HASH') {
     foreach my $key (keys %$data) {
         my $val = $data->{$key};
@@ -34,14 +31,18 @@ if (ref $data eq 'HASH') {
 
 END {
 
-print STDERR "Tempolate:: processing tempolates\n";
-foreach my $file (keys %::tempolates) {
+foreach my $file (sort keys %::tempolates) {
     my $dir = dirname $file;
     if ($verb eq 'cp') {
-        print STDERR "Tempolate:: printing $file\n";
         make_path $dir unless -d $dir;
         open my $fd, '>', $file or die $!;
+        print "$file\n";
         print $fd $::tempolates{$file};
+    } elsif ($verb eq 'cat') {
+        print STDERR "$file\n";
+        print $::tempolates{$file};
+    } elsif ($verb eq 'ls') {
+        print "$file\n";
     } elsif ($verb eq 'rm') {
         print STDERR "Tempolate:: removing $file\n";
         unlink $file;
@@ -84,8 +85,10 @@ If the YAML argument is missing, it is read from STDIN.
 
 Verbs:
 
-  cp	Generate files with resolved variables
+  cp	Generate files with resolved variables, print filenames to STDOUT
   rm	Remove generated files and dirs
+  cat	Print generated blobs to STDOUT
+  ls	Print generated filenames to STDOUT
 
 =head1 DESCRIPTION
 
