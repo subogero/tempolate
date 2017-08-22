@@ -1,4 +1,4 @@
-install: README.md
+install:
 	cp lib/Tempolate.pm $(DESTDIR)/usr/share/perl5
 uninstall:
 	rm $(DESTDIR)/usr/share/perl5/Tempolate.pm
