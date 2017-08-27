@@ -20,11 +20,11 @@ sub tee2log {
 our $data;
 sub import {
     shift;
-    $data = shift;
     $loglevel = shift;
+    $data = shift;
 
-    tee2log "reading data";
     unless (defined $data) {
+        tee2log "reading data @ARGV";
         my $yaml;
         $yaml .= $_ while <>;
         $data = Load $yaml;
@@ -49,7 +49,7 @@ sub import {
 sub repolate {
     my ($d, $var, $seen) = @_;
     my %d = %$d if ref $d eq 'HASH';
-    my @d = %$d if ref $d eq 'ARRAY';
+    my @d = @$d if ref $d eq 'ARRAY';
 
     $var //= $d unless $seen;
     $seen //= {};
